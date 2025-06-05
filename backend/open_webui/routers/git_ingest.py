@@ -43,7 +43,7 @@ class IngestToKnowledgeRequest(IngestRequest):
 
 @router.post("/ingest")
 async def ingest_endpoint(req: IngestRequest, user=Depends(get_verified_user)):
-    result = ingest(
+    result = await ingest(
         source=req.source,
         branch=req.branch,
         commit=req.commit,

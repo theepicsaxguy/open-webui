@@ -1,6 +1,9 @@
 # Git Ingest API
 
 This document describes the API for ingesting a Git repository or local directory through the backend.
+The implementation now relies on the **gitingest** library which provides robust parsing,
+token estimation and better handling of different file encodings. Git operations are
+executed asynchronously to avoid blocking the API server.
 
 ## Endpoint
 
@@ -26,6 +29,8 @@ Returns a JSON object with the following fields:
 - `Summary` – textual summary of the ingestion result.
 - `DirectoryTree` – directory tree representation.
 - `FileContent` – concatenated file contents if requested.
+- The `Summary` field also includes an estimated token count derived from the
+  ingested files.
 
 You can also use the **Git Ingest** workspace page to interactively run this endpoint and view the results with citations.
 

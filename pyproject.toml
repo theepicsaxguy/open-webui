@@ -130,6 +130,8 @@ dependencies = [
 
     "tencentcloud-sdk-python==3.0.1336",
 
+    "gitingest==0.1.4",
+
     "gcp-storage-emulator>=2024.8.3",
 
     "moto[s3]>=5.0.26",

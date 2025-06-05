@@ -1,11 +1,12 @@
 import os
-import shutil
 import subprocess
 import tempfile
 import fnmatch
 import logging
 from dataclasses import dataclass, field
 from typing import List, Optional
+
+from gitingest.repository_ingest import ingest_async
 
 log = logging.getLogger(__name__)
 
@@ -149,7 +150,7 @@ def collect_files(node: FileSystemNode) -> List[FileSystemNode]:
     return files
 
 
-def ingest(
+async def ingest(
     source: str,
     branch: str | None = None,
     commit: str | None = None,
@@ -159,24 +160,27 @@ def ingest(
     include_patterns: list[str] | None = None,
     exclude_patterns: list[str] | None = None,
 ) -> dict:
-    tmp_dir = None
-    path = source
-    if source.startswith("http://") or source.startswith("https://") or source.endswith(".git") or "@" in source:
-        tmp_dir = clone_repo(source, branch, commit)
-        path = os.path.join(tmp_dir, subpath or "")
-    elif subpath:
-        path = os.path.join(source, subpath)
-    node = traverse_directory(
-        path,
-        max_depth,
-        max_file_size=10_485_760,
+    """Ingest a Git repository or local path using the gitingest library."""
+
+    src = source
+    if commit:
+        src = f"{src}#{commit}"
+    if subpath:
+        if src.startswith("http://") or src.startswith("https://") or src.endswith(".git") or "@" in src:
+            if not src.endswith("/"):
+                src += "/"
+            src += subpath
+        else:
+            src = os.path.join(src, subpath)
+
+    summary, tree, content = await ingest_async(
+        source=src,
         include_patterns=include_patterns,
         exclude_patterns=exclude_patterns,
-        ingest_content=ingest_file_content,
+        branch=branch,
     )
-    summary = build_summary(node)
-    tree = build_tree(node)
-    content = gather_content(node) if ingest_file_content else ""
-    if tmp_dir:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+    if not ingest_file_content:
+        content = ""
+
     return {"Summary": summary, "DirectoryTree": tree, "FileContent": content}
