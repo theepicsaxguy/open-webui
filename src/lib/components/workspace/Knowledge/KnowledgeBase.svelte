@@ -39,8 +39,10 @@
 	import Files from './KnowledgeBase/Files.svelte';
 	import AddFilesPlaceholder from '$lib/components/AddFilesPlaceholder.svelte';
 
-	import AddContentMenu from './KnowledgeBase/AddContentMenu.svelte';
-	import AddTextContentModal from './KnowledgeBase/AddTextContentModal.svelte';
+import AddContentMenu from './KnowledgeBase/AddContentMenu.svelte';
+import AddTextContentModal from './KnowledgeBase/AddTextContentModal.svelte';
+import AddGitRepoModal from './KnowledgeBase/AddGitRepoModal.svelte';
+import { ingestGitRepoToKnowledge } from '$lib/apis/git_ingest';
 
 	import SyncConfirmDialog from '../../common/ConfirmDialog.svelte';
 	import RichTextInput from '$lib/components/common/RichTextInput.svelte';
@@ -70,9 +72,10 @@
 	let knowledge: Knowledge | null = null;
 	let query = '';
 
-	let showAddTextContentModal = false;
-	let showSyncConfirmModal = false;
-	let showAccessControlModal = false;
+let showAddTextContentModal = false;
+let showSyncConfirmModal = false;
+let showAccessControlModal = false;
+let showAddGitRepoModal = false;
 
 	let inputFiles = null;
 
@@ -640,11 +643,27 @@
 />
 
 <AddTextContentModal
-	bind:show={showAddTextContentModal}
-	on:submit={(e) => {
-		const file = createFileFromText(e.detail.name, e.detail.content);
-		uploadFileHandler(file);
-	}}
+        bind:show={showAddTextContentModal}
+        on:submit={(e) => {
+                const file = createFileFromText(e.detail.name, e.detail.content);
+                uploadFileHandler(file);
+        }}
+/>
+
+<AddGitRepoModal
+        bind:show={showAddGitRepoModal}
+        on:submit={async (e) => {
+                try {
+                        await ingestGitRepoToKnowledge(localStorage.token, {
+                                knowledge_id: knowledge?.id,
+                                ...e.detail
+                        });
+                        knowledge = await getKnowledgeById(localStorage.token, knowledge.id);
+                        toast.success($i18n.t('Git repository ingested.'));
+                } catch (err) {
+                        toast.error(`${err}`);
+                }
+        }}
 />
 
 <input
@@ -884,20 +903,23 @@
 								/>
 
 								<div>
-									<AddContentMenu
-										on:upload={(e) => {
-											if (e.detail.type === 'directory') {
-												uploadDirectoryHandler();
-											} else if (e.detail.type === 'text') {
-												showAddTextContentModal = true;
-											} else {
-												document.getElementById('files-input').click();
-											}
-										}}
-										on:sync={(e) => {
-											showSyncConfirmModal = true;
-										}}
-									/>
+                                                                       <AddContentMenu
+                                                                               on:upload={(e) => {
+                                                                                       if (e.detail.type === 'directory') {
+                                                                                               uploadDirectoryHandler();
+                                                                                       } else if (e.detail.type === 'text') {
+                                                                                               showAddTextContentModal = true;
+                                                                                       } else {
+                                                                                               document.getElementById('files-input').click();
+                                                                                       }
+                                                                               }}
+                                                                               on:sync={(e) => {
+                                                                                       showSyncConfirmModal = true;
+                                                                               }}
+                                                                               on:git={() => {
+                                                                                        showAddGitRepoModal = true;
+                                                                                }}
+                                                                       />
 								</div>
 							</div>
 						</div>

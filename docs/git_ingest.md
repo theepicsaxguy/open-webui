@@ -36,3 +36,24 @@ curl -X POST http://localhost:8080/api/v1/git-ingest/ingest \
   -H "Content-Type: application/json" \
   -d '{"source": "https://github.com/user/repo.git", "max_depth": 5}'
 ```
+
+## Ingest into Knowledge
+
+`POST /api/v1/git-ingest/knowledge`
+
+### Request Body
+
+```json
+{
+  "knowledge_id": "existing-knowledge-id", // optional
+  "knowledge_name": "My Repo",           // required if knowledge_id not provided
+  "description": "optional description",
+  "source": "<git url or local path>",
+  "branch": "optional branch",
+  "commit": "optional commit",
+  "subpath": "optional subpath",
+  "max_depth": 20
+}
+```
+
+The endpoint clones or reads the repository, stores each file as a document, and adds them to the specified knowledge base.

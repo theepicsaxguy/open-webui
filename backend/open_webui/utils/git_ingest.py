@@ -139,6 +139,16 @@ def gather_content(node: FileSystemNode) -> str:
     return "".join(parts)
 
 
+def collect_files(node: FileSystemNode) -> List[FileSystemNode]:
+    """Return a flat list of all file nodes contained in ``node``."""
+    files: List[FileSystemNode] = []
+    if node.node_type == "file":
+        files.append(node)
+    for child in node.children:
+        files.extend(collect_files(child))
+    return files
+
+
 def ingest(
     source: str,
     branch: str | None = None,
