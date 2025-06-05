@@ -61,6 +61,7 @@ from open_webui.routers import (
     ollama,
     openai,
     retrieval,
+    git_ingest,
     pipelines,
     tasks,
     auths,
@@ -1087,6 +1088,7 @@ app.include_router(images.router, prefix="/api/v1/images", tags=["images"])
 
 app.include_router(audio.router, prefix="/api/v1/audio", tags=["audio"])
 app.include_router(retrieval.router, prefix="/api/v1/retrieval", tags=["retrieval"])
+app.include_router(git_ingest.router, prefix="/api/v1/git-ingest", tags=["git-ingest"])
 
 app.include_router(configs.router, prefix="/api/v1/configs", tags=["configs"])
 

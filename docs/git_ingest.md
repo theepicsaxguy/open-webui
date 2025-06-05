@@ -1,0 +1,38 @@
+# Git Ingest API
+
+This document describes the API for ingesting a Git repository or local directory through the backend.
+
+## Endpoint
+
+`POST /api/v1/git-ingest/ingest`
+
+### Request Body
+
+```json
+{
+  "source": "<git url or local path>",
+  "branch": "optional branch",
+  "commit": "optional commit",
+  "subpath": "optional subpath",
+  "max_depth": 20,
+  "ingest_file_content": true
+}
+```
+
+### Response
+
+Returns a JSON object with the following fields:
+
+- `Summary` – textual summary of the ingestion result.
+- `DirectoryTree` – directory tree representation.
+- `FileContent` – concatenated file contents if requested.
+
+You can also use the **Git Ingest** workspace page to interactively run this endpoint and view the results with citations.
+
+## Example
+
+```bash
+curl -X POST http://localhost:8080/api/v1/git-ingest/ingest \
+  -H "Content-Type: application/json" \
+  -d '{"source": "https://github.com/user/repo.git", "max_depth": 5}'
+```
