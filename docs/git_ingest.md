@@ -3,7 +3,8 @@
 This document describes the API for ingesting a Git repository or local directory through the backend.
 The implementation now relies on the **gitingest** library which provides robust parsing,
 token estimation and better handling of different file encodings. Git operations are
-executed asynchronously to avoid blocking the API server.
+executed asynchronously to avoid blocking the API server. The library also honours
+`.gitingest` files in the repository so you can specify additional ignore patterns.
 
 ## Endpoint
 
@@ -38,7 +39,7 @@ You can also use the **Git Ingest** workspace page to interactively run this end
 ```bash
 curl -X POST http://localhost:8080/api/v1/git-ingest/ingest \
   -H "Content-Type: application/json" \
-  -d '{"source": "https://github.com/user/repo.git"}'
+  -d '{"source": "octocat/Hello-World"}'  # slugs or full URLs are accepted
 ```
 
 ## Ingest into Knowledge
@@ -61,3 +62,6 @@ curl -X POST http://localhost:8080/api/v1/git-ingest/ingest \
 ```
 
 The endpoint clones or reads the repository, stores each file as a document, and adds them to the specified knowledge base.
+File paths are stored relative to the repository root so you can see where each
+document originated. Repository slugs like `octocat/Hello-World` are supported
+in addition to full URLs.

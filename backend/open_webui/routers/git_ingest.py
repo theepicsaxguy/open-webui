@@ -103,7 +103,7 @@ async def ingest_to_knowledge(
             FileForm(
                 id=str(uuid.uuid4()),
                 filename=node.name,
-                path="",
+                path=node.path_str,
                 data={"content": node.content},
                 meta={"name": node.name, "content_type": "text/plain", "size": node.size},
             ),

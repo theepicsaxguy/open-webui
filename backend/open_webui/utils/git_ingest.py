@@ -4,11 +4,8 @@ from typing import List, Optional, Tuple
 from gitingest.cloning import clone_repo
 from gitingest.query_parsing import parse_query
 from gitingest.filesystem_schema import FileSystemNode, FileSystemNodeType
-from gitingest.ingestion import FileSystemStats, _process_node
-from gitingest.output_formatters import (
-    format_directory,
-    format_single_file,
-)
+from gitingest.ingestion import FileSystemStats, _process_node, apply_gitingest_file
+from gitingest.output_formatters import format_directory, format_single_file
 
 log = logging.getLogger(__name__)
 
@@ -35,7 +32,7 @@ async def _ingest_to_node(
     parsed = await parse_query(
         source=source,
         max_file_size=10 * 1024 * 1024,
-        from_web=False,
+        from_web=True,
         include_patterns=set(include_patterns) if include_patterns else None,
         ignore_patterns=set(exclude_patterns) if exclude_patterns else None,
     )
@@ -48,9 +45,12 @@ async def _ingest_to_node(
         parsed.subpath = subpath
 
     if parsed.url:
-        await clone_repo(parsed.extact_clone_config())
+        await clone_repo(parsed.extract_clone_config())
 
     target_path = parsed.local_path / parsed.subpath.lstrip("/")
+
+    # Apply .gitingest ignore patterns if present
+    apply_gitingest_file(parsed.local_path, parsed)
 
     if (parsed.type and parsed.type == "blob") or target_path.is_file():
         node = FileSystemNode(
