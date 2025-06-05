@@ -5,7 +5,7 @@ from gitingest.cloning import clone_repo
 from gitingest.query_parsing import parse_query
 from gitingest.filesystem_schema import FileSystemNode, FileSystemNodeType
 from gitingest.ingestion import FileSystemStats, _process_node, apply_gitingest_file
-from gitingest.output_formatters import format_node
+from gitingest.output_formatters import format_directory, format_single_file
 
 log = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ async def _ingest_to_node(
             size=target_path.stat().st_size,
             file_count=1,
         )
-        summary, tree, content = format_node(node, parsed)
+        summary, tree, content = format_single_file(node, parsed)
         return node, summary, tree, content
 
     root = FileSystemNode(
@@ -75,7 +75,7 @@ async def _ingest_to_node(
 
     stats = FileSystemStats()
     _process_node(root, parsed, stats)
-    summary, tree, content = format_node(root, parsed)
+    summary, tree, content = format_directory(root, parsed)
     return root, summary, tree, content
 
 

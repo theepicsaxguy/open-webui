@@ -36,6 +36,8 @@ RestrictedPython==8.0
 loguru==0.7.3
 asgiref==3.8.1
 
+gitingest==0.1.4
+
 # AI libraries
 openai
 anthropic
