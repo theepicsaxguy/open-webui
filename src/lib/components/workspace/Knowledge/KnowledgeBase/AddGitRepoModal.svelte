@@ -9,7 +9,6 @@
     let branch: string | null = null;
     let commit: string | null = null;
     let subpath: string | null = null;
-    let maxDepth = 20;
 
     const submit = () => {
         if (!source.trim()) return;
@@ -17,15 +16,13 @@
             source,
             branch,
             commit,
-            subpath,
-            max_depth: maxDepth
+            subpath
         });
         show = false;
         source = '';
         branch = null;
         commit = null;
         subpath = null;
-        maxDepth = 20;
     };
 </script>
 
@@ -38,10 +35,6 @@
             <input class="input flex-1" placeholder={$i18n.t('Commit')} bind:value={commit} />
         </div>
         <input class="input" placeholder={$i18n.t('Subpath')} bind:value={subpath} />
-        <div class="flex items-center gap-2">
-            <label class="text-sm">{$i18n.t('Max Depth')}</label>
-            <input type="number" class="input w-20" bind:value={maxDepth} min="1" />
-        </div>
         <div class="flex justify-end gap-2 mt-2">
             <button type="button" class="btn-secondary" on:click={() => (show = false)}>{$i18n.t('Cancel')}</button>
             <button type="submit" class="btn">{$i18n.t('Ingest')}</button>

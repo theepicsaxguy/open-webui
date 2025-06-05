@@ -17,7 +17,6 @@ executed asynchronously to avoid blocking the API server.
   "branch": "optional branch",
   "commit": "optional commit",
   "subpath": "optional subpath",
-  "max_depth": 20,
   "ingest_file_content": true
 }
 ```
@@ -39,7 +38,7 @@ You can also use the **Git Ingest** workspace page to interactively run this end
 ```bash
 curl -X POST http://localhost:8080/api/v1/git-ingest/ingest \
   -H "Content-Type: application/json" \
-  -d '{"source": "https://github.com/user/repo.git", "max_depth": 5}'
+  -d '{"source": "https://github.com/user/repo.git"}'
 ```
 
 ## Ingest into Knowledge
@@ -57,7 +56,7 @@ curl -X POST http://localhost:8080/api/v1/git-ingest/ingest \
   "branch": "optional branch",
   "commit": "optional commit",
   "subpath": "optional subpath",
-  "max_depth": 20
+  "ingest_file_content": true
 }
 ```
 

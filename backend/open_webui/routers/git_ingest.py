@@ -1,19 +1,11 @@
 import logging
-import os
-import shutil
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel
 
 from open_webui.constants import ERROR_MESSAGES
 
-from open_webui.utils.git_ingest import (
-    ingest,
-    clone_repo,
-    traverse_directory,
-    collect_files,
-    build_summary,
-)
+from open_webui.utils.git_ingest import ingest, collect_files
 from open_webui.models.files import FileForm, Files
 from open_webui.models.knowledge import KnowledgeForm, Knowledges
 from open_webui.routers.retrieval import ProcessFileForm, process_file
@@ -31,7 +23,6 @@ class IngestRequest(BaseModel):
     branch: str | None = None
     commit: str | None = None
     subpath: str | None = None
-    max_depth: int | None = 20
     ingest_file_content: bool | None = True
 
 
@@ -48,7 +39,6 @@ async def ingest_endpoint(req: IngestRequest, user=Depends(get_verified_user)):
         branch=req.branch,
         commit=req.commit,
         subpath=req.subpath,
-        max_depth=req.max_depth or 20,
         ingest_file_content=True if req.ingest_file_content is None else req.ingest_file_content,
     )
     return result
@@ -94,15 +84,14 @@ async def ingest_to_knowledge(
                 detail=ERROR_MESSAGES.DEFAULT("knowledge"),
             )
 
-    tmp_dir = None
-    path = req.source
-    if req.source.startswith("http://") or req.source.startswith("https://") or req.source.endswith(".git") or "@" in req.source:
-        tmp_dir = clone_repo(req.source, req.branch, req.commit)
-        path = os.path.join(tmp_dir, req.subpath or "")
-    elif req.subpath:
-        path = os.path.join(req.source, req.subpath)
-
-    root_node = traverse_directory(path, max_depth=req.max_depth or 20)
+    result = await ingest(
+        source=req.source,
+        branch=req.branch,
+        commit=req.commit,
+        subpath=req.subpath,
+        ingest_file_content=True,
+    )
+    root_node = result.pop("_node")
     file_nodes = collect_files(root_node)
 
     file_ids: list[str] = []
@@ -137,12 +126,9 @@ async def ingest_to_knowledge(
     data["file_ids"] = existing
     knowledge = Knowledges.update_knowledge_data_by_id(id=knowledge.id, data=data)
 
-    if tmp_dir:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-
     return {
         "knowledge_id": knowledge.id,
         "files_added": len(file_ids),
-        "summary": build_summary(root_node),
+        "summary": result["Summary"],
     }
 

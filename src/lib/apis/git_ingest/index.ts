@@ -7,7 +7,6 @@ export const ingestGitRepo = async (
         branch?: string | null;
         commit?: string | null;
         subpath?: string | null;
-        max_depth?: number | null;
         ingest_file_content?: boolean | null;
     }
 ) => {
@@ -49,7 +48,6 @@ export const ingestGitRepoToKnowledge = async (
         branch?: string | null;
         commit?: string | null;
         subpath?: string | null;
-        max_depth?: number | null;
     }
 ) => {
     let error = null;

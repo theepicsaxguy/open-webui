@@ -8,7 +8,6 @@
     let branch: string | null = null;
     let commit: string | null = null;
     let subpath: string | null = null;
-    let maxDepth: number = 20;
     let ingestContent = true;
 
     let loading = false;
@@ -25,7 +24,6 @@
                 branch,
                 commit,
                 subpath,
-                max_depth: maxDepth,
                 ingest_file_content: ingestContent
             });
         } catch (err) {
@@ -46,9 +44,7 @@
         </div>
         <input class="input" placeholder="Subpath" bind:value={subpath} />
         <div class="flex gap-2 items-center">
-            <label class="text-sm">Max Depth</label>
-            <input type="number" class="input w-20" bind:value={maxDepth} min="1" />
-            <label class="ml-4 flex items-center gap-1 text-sm">
+            <label class="flex items-center gap-1 text-sm">
                 <input type="checkbox" bind:checked={ingestContent} />
                 Ingest File Content
             </label>
