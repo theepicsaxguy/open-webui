@@ -1250,7 +1250,7 @@
 	"Tool updated successfully": "",
         "Tools": "",
         "Tools Access": "",
-        "Git Ingest": "",
+        "Git Ingest": "Git Ingest",
         "Ingest Git repository": "Ingest Git repository",
         "Git repository ingested.": "Git repository ingested.",
 	"Tools are a function calling system with arbitrary code execution": "",
