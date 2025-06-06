@@ -93,15 +93,27 @@
 				</DropdownMenu.Item>
 			</Tooltip>
 
-			<DropdownMenu.Item
-				class="flex  gap-2  items-center px-3 py-2 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
-				on:click={() => {
-					dispatch('upload', { type: 'text' });
-				}}
-			>
-				<BarsArrowUp strokeWidth="2" />
-				<div class="flex items-center">{$i18n.t('Add text content')}</div>
-			</DropdownMenu.Item>
-		</DropdownMenu.Content>
-	</div>
+                        <DropdownMenu.Item
+                                class="flex  gap-2  items-center px-3 py-2 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+                                on:click={() => {
+                                        dispatch('upload', { type: 'text' });
+                                }}
+                        >
+                                <BarsArrowUp strokeWidth="2" />
+                                <div class="flex items-center">{$i18n.t('Add text content')}</div>
+                        </DropdownMenu.Item>
+
+                        <DropdownMenu.Item
+                                class="flex  gap-2  items-center px-3 py-2 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+                                on:click={() => {
+                                        dispatch('git');
+                                }}
+                        >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                        <path fill-rule="evenodd" d="M12 0a2 2 0 0 1 1.414.586l10 10a2 2 0 0 1 0 2.828l-10 10a2 2 0 0 1-2.828 0l-10-10a2 2 0 0 1 0-2.828l10-10A2 2 0 0 1 12 0zm0 4.414L4.414 12 12 19.586 19.586 12 12 4.414z" clip-rule="evenodd" />
+                                </svg>
+                                <div class="flex items-center">{$i18n.t('Ingest Git repository')}</div>
+                        </DropdownMenu.Item>
+                </DropdownMenu.Content>
+        </div>
 </Dropdown>
